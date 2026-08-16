@@ -1,77 +1,123 @@
-# llm-Big-Map
-The Fog Around LLMs
+# LLM Field Index（领域索引）
 
-After a year of working with LLMs, I still don't feel like I've built any real, systematic knowledge. Even when I've gone deep on the latest techniques in a specific area — RAG, for instance — and tracked every detail, I don't feel like the fog around LLMs as a whole has lifted. If anything, it feels just as thick.
+A living bilingual **field index**: each topic is a detailed concept, then other people's papers / repos / official docs.
 
-Most beginners form their understanding of LLMs through news headlines and whatever project suddenly jumps into the spotlight. What's missing is systematic knowledge — but the institutions that could provide that kind of education simply can't keep pace with how fast the field moves. SwitchCraft launched on May 8, 2026, for example, and no textbook will ever record it. Information is everywhere, but precisely because it's scattered across so many places, people without an internal index to organize it struggle to actually get better as they consume more of it. Often, after months of "learning," there's more fog in front of them, not less.
+This repo is concepts + curated primary links. PRs should add sources, not essays.
 
-This document is my attempt at building that missing index — a map of the pipeline from raw data to the person using the product, with definitions and current references at each stage.
+- **English:** [`book/en/README.md`](./book/en/README.md) — jargon glossed as `compaction (压缩)`
+- **中文:** [`book/zh/README.md`](./book/zh/README.md) — 专有名词保留英文
 
-The Pipeline
-0. Background / History
+Same TOC, same filenames, 1:1. License: [CC-BY-4.0](./LICENSE) (text). How to help: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-A brief primer for readers new to the space: how the modern LLM stack came together, from early scaling-law research to today's agentic tooling.
+This is an industry field guide, not a product manual. It does not document any vendor's unreleased architecture.
 
-↓
+---
 
-1. Data
+## 前言 / Preface
 
-Definition: the raw material for training — text, code, images, human feedback — collected, cleaned, and labeled at scale. Modern data pipelines increasingly include preference ranking and rubric scoring of model outputs (the fuel for RLHF), not just classic annotation.
+[中文全文](./book/zh/00-preface.md) · [English](./book/en/00-preface.md)
 
-↓
+在今天，LLM已经激活了整个世界上科技业的繁荣生态，他成了局内人的盛宴。几个月的时间足以完成一次技术迭代。但对于一个初学者，尤其是初学计算机技术的人来说，llm越来越陌生不可测了，大多数初学者对行业迭代信息的了解来源于新闻或者某些新的产品的单独介绍，这种信息带来的知识，绝对是不足以帮助一位初入行业的人拥有体系化的认识与足够快，足够完整的了解这个行业，大多数人只是迷茫在入口处，不断看到新的产品，新的进化，而越来越觉得LLM神秘莫测。
 
-2. Train the Model
+本人同样作为初学者，打算在学习的过程中完成这本书。
 
-Definition: the process of updating model weights on that data — pretraining (learning general language patterns from huge corpora) followed by post-training steps like SFT (supervised fine-tuning) and RLHF (reinforcement learning from human feedback) to align the model with instructions and preferences.
+Today LLMs have switched on a booming tech ecology worldwide. It has become a feast for insiders. A few months is enough for a full technical generation. For a beginner — especially someone new to computing — LLMs feel more foreign and unreadable by the month. Most beginners learn the industry from news, or from isolated write-ups of a new product. That kind of knowledge is not enough for a systematic picture, nor for a fast and complete view of the field. Most people stay lost at the entrance: they keep seeing new products and new evolutions, and LLM feels more mysterious every time.
 
-↓
+I am a beginner too. I intend to finish this book while I am still learning.
 
-3. Get an LLM
+---
 
-Definition: the output of training — a set of weights implementing a transformer architecture, capable of next-token prediction at scale.
+## How to read（怎么读）
 
-↓
+Do not linear-read 1→31. Start with [Preface / 前言](./book/zh/00-preface.md).
 
-4. Deploy the LLM
+| Path | Time | Question | Start |
+| --- | --- | --- | --- |
+| **A · Elevator** | 30 min | Where do firms and money sit? | [EN Ch 1](./book/en/part-01-value-chain/ch-01-nine-steps.md) · [中文](./book/zh/part-01-value-chain/ch-01-nine-steps.md) |
+| **B · Gaps** | 2 h | What did the 9-step sketch squash? | [EN Ch 2](./book/en/part-01-value-chain/ch-02-refined-26.md) · [中文](./book/zh/part-01-value-chain/ch-02-refined-26.md) |
+| **C · Context layer** | half day | What should this agent see *now*? | [EN Ch 11](./book/en/part-03-context-router/ch-11-definition.md) · [中文](./book/zh/part-03-context-router/ch-11-definition.md) |
 
-Definition: packaging the trained weights (quantization, sharding, checkpoint conversion) so they can run efficiently on serving hardware.
+**A — leave with:** 9-step order is right, boxes too fat; SiliconFlow-class firms sell engine + hosted inference + API as one SKU（库存单元）; Gateway is optional if the app talks to Anthropic/OpenAI directly.
 
-↓
+**C — keep fragments split:** relatedness ≠ compacting ≠ intent ≠ model router.
 
-5. Inference
+Each chapter: detailed concept (what / why / how / boundaries / example / failure) · comparison · **Read (读)** primary links.
 
-References: vLLM · SGLang
+---
 
-Definition: the runtime engine that actually generates tokens from a deployed model, optimizing for throughput and latency under real traffic.
+## Contents（目录）
 
-vLLM — introduced PagedAttention, borrowing OS-style paged memory management to make KV-cache handling far more memory-efficient. Paper: "Efficient Memory Management for Large Language Model Serving with PagedAttention" (Kwon et al., SOSP 2023).
-SGLang — introduced RadixAttention, which reuses KV-cache across requests when prefixes match, cutting prefill computation. Paper: "SGLang: Efficient Execution of Structured Language Model Programs" (Zheng et al.).
+Numbering is identical in `book/en/` and `book/zh/`.
 
-↓
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 0 | [Preface](./book/en/00-preface.md) | [前言](./book/zh/00-preface.md) |
 
-6. API
+### Part I · Value chain（价值链）
 
-Definition: the standardized HTTP interface (most commonly the OpenAI-compatible chat/completions format) that lets any application talk to any inference backend without custom integration code.
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 1 | [9-step sketch](./book/en/part-01-value-chain/ch-01-nine-steps.md) | [9 步草图](./book/zh/part-01-value-chain/ch-01-nine-steps.md) |
+| 2 | [7×26 map](./book/en/part-01-value-chain/ch-02-refined-26.md) | [7 段 26 层](./book/zh/part-01-value-chain/ch-02-refined-26.md) |
+| 3 | [Compute & data](./book/en/part-01-value-chain/ch-03-compute-and-data.md) | [算力与数据](./book/zh/part-01-value-chain/ch-03-compute-and-data.md) |
+| 4 | [Pretrain & post-train](./book/en/part-01-value-chain/ch-04-train-and-posttrain.md) | [预训练与后训练](./book/zh/part-01-value-chain/ch-04-train-and-posttrain.md) |
+| 5 | [Eval gate](./book/en/part-01-value-chain/ch-05-eval-gate.md) | [评测门](./book/zh/part-01-value-chain/ch-05-eval-gate.md) |
+| 6 | [Inference & API](./book/en/part-01-value-chain/ch-06-inference-api.md) | [推理与 API](./book/zh/part-01-value-chain/ch-06-inference-api.md) |
+| 7 | [Control plane](./book/en/part-01-value-chain/ch-07-control-plane.md) | [控制面](./book/zh/part-01-value-chain/ch-07-control-plane.md) |
 
-↓
+### Part II · Inference cost（推理成本）
 
-7. Gateway / Router
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 8 | [Prompt cache](./book/en/part-02-inference-cost/ch-08-prompt-cache.md) | [Prompt cache](./book/zh/part-02-inference-cost/ch-08-prompt-cache.md) |
+| 9 | [Batch & Flex](./book/en/part-02-inference-cost/ch-09-batch-flex.md) | [Batch 与 Flex](./book/zh/part-02-inference-cost/ch-09-batch-flex.md) |
+| 10 | [Relay & discount](./book/en/part-02-inference-cost/ch-10-relay-discount.md) | [中转站与折扣](./book/zh/part-02-inference-cost/ch-10-relay-discount.md) |
 
-References: LiteLLM · RouteLLM (LMSYS)
+### Part III · Context layer（上下文层）
 
-Definition: a proxy layer sitting between applications and model providers. A gateway unifies many providers behind one API (key management, caching, fallback, cost tracking); a router goes further and picks the best or cheapest model per request based on task classification.
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 11 | [Definition & actions](./book/en/part-03-context-router/ch-11-definition.md) | [定义与动作](./book/zh/part-03-context-router/ch-11-definition.md) |
+| 12 | [L0–L4 window](./book/en/part-03-context-router/ch-12-l0-l4-window.md) | [L0–L4 窗口](./book/zh/part-03-context-router/ch-12-l0-l4-window.md) |
+| 13 | [A typical pipeline](./book/en/part-03-context-router/ch-13-pipeline.md) | [典型管线](./book/zh/part-03-context-router/ch-13-pipeline.md) |
+| 14 | [Compacting](./book/en/part-03-context-router/ch-14-compacting.md) | [Compacting](./book/zh/part-03-context-router/ch-14-compacting.md) |
+| 15 | [Relatedness](./book/en/part-03-context-router/ch-15-relatedness.md) | [相关](./book/zh/part-03-context-router/ch-15-relatedness.md) |
+| 16 | [One session vs Codex](./book/en/part-03-context-router/ch-16-single-session-vs-codex.md) | [单 session vs Codex](./book/zh/part-03-context-router/ch-16-single-session-vs-codex.md) |
+| 17 | [Mamba / RNN](./book/en/part-03-context-router/ch-17-mamba-rnn.md) | [Mamba / RNN](./book/zh/part-03-context-router/ch-17-mamba-rnn.md) |
 
-LiteLLM — the most widely adopted open-source, self-hosted gateway; normalizes 100+ providers behind one OpenAI-format endpoint.
-RouteLLM — LMSYS's research-grade routing classifier for matching queries to the cheapest capable model.
+### Part IV · Routing & NLU（路由与理解） — keep separate
 
-↓
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 18 | [Model Router](./book/en/part-04-routing-nlu/ch-18-model-router.md) | [Model Router](./book/zh/part-04-routing-nlu/ch-18-model-router.md) |
+| 19 | [API switching](./book/en/part-04-routing-nlu/ch-19-api-switching.md) | [API 切换](./book/zh/part-04-routing-nlu/ch-19-api-switching.md) |
+| 20 | [Intent](./book/en/part-04-routing-nlu/ch-20-intent.md) | [意图](./book/zh/part-04-routing-nlu/ch-20-intent.md) |
+| 21 | [Slot filling](./book/en/part-04-routing-nlu/ch-21-slot-filling.md) | [Slot filling](./book/zh/part-04-routing-nlu/ch-21-slot-filling.md) |
+| 22 | [Context engineering](./book/en/part-04-routing-nlu/ch-22-context-engineering.md) | [上下文工程](./book/zh/part-04-routing-nlu/ch-22-context-engineering.md) |
+| 23 | [Feature extraction](./book/en/part-04-routing-nlu/ch-23-feature-extraction.md) | [特征提取](./book/zh/part-04-routing-nlu/ch-23-feature-extraction.md) |
 
-8. Application
+### Part V · Agent runtime（运行时）
 
-Definition: the product layer built on top of the API/gateway — where model capability turns into a usable tool, whether that's a code editor, a chat interface, or an agentic workflow app.
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 24 | [Permission / Identity](./book/en/part-05-agent-runtime/ch-24-permission-identity.md) | [Permission / Identity](./book/zh/part-05-agent-runtime/ch-24-permission-identity.md) |
+| 25 | [Agent evals](./book/en/part-05-agent-runtime/ch-25-agent-evals.md) | [Agent evals](./book/zh/part-05-agent-runtime/ch-25-agent-evals.md) |
+| 26 | [Coding SOP](./book/en/part-05-agent-runtime/ch-26-coding-sop.md) | [Coding SOP](./book/zh/part-05-agent-runtime/ch-26-coding-sop.md) |
+| 27 | [Skills / auto-SOP](./book/en/part-05-agent-runtime/ch-27-skills-auto-sop.md) | [Skills / 自动 SOP](./book/zh/part-05-agent-runtime/ch-27-skills-auto-sop.md) |
+| 28 | [Browser agent](./book/en/part-05-agent-runtime/ch-28-browser-general-agent.md) | [浏览器 agent](./book/zh/part-05-agent-runtime/ch-28-browser-general-agent.md) |
 
-↓
+### Part VI · Ingress & market（入口与市场）
 
-9. The User
+| Ch | EN | 中文 |
+| --- | --- | --- |
+| 29 | [Web-to-Agent](./book/en/part-06-ingress-market/ch-29-web-to-agent.md) | [Web-to-Agent](./book/zh/part-06-ingress-market/ch-29-web-to-agent.md) |
+| 30 | [ChatGPT handoff](./book/en/part-06-ingress-market/ch-30-chatgpt-handoff.md) | [ChatGPT handoff](./book/zh/part-06-ingress-market/ch-30-chatgpt-handoff.md) |
+| 31 | [Marketplace](./book/en/part-06-ingress-market/ch-31-marketplace.md) | [Marketplace](./book/zh/part-06-ingress-market/ch-31-marketplace.md) |
 
-The person whose problem the entire stack — from raw data to a rendered response — ultimately exists to solve.
+Bibliography: [EN](./book/en/bibliography.md) · [中文](./book/zh/bibliography.md)
+
+---
+
+## Correct a fact（纠错）
+
+Open an issue (`fact-error`) or a PR against **one chapter**. Numbers (cache 0.1×, Batch 50%, Codex 90%) need an official URL + date. See [CONTRIBUTING.md](./CONTRIBUTING.md).
